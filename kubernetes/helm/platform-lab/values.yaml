@@ -1,0 +1,64 @@
+postgres:
+  image:
+    repository: postgres
+    tag: 16-alpine
+    pullPolicy: IfNotPresent
+
+  database: platform_lab
+  username: app_user
+  password: app_password
+
+  service:
+    name: postgres-service
+    port: 5432
+
+  persistence:
+    enabled: true
+    size: 1Gi
+
+backend:
+  replicaCount: 2
+
+  image:
+    repository: platform-lab-backend
+    tag: phase3
+    pullPolicy: Never
+
+  service:
+    name: backend-service
+    port: 8000
+    targetPort: 8000
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+frontend:
+  replicaCount: 2
+
+  image:
+    repository: platform-lab-frontend
+    tag: phase3
+    pullPolicy: Never
+
+  service:
+    name: frontend-service
+    type: NodePort
+    port: 80
+    targetPort: 80
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+ingress:
+  enabled: false
+  host: platform-lab-helm.local

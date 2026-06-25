@@ -1,0 +1,6 @@
+apiVersion: v2
+name: platform-lab
+description: A Helm chart for the Platform Reliability Lab application
+type: application
+version: 0.1.0
+appVersion: "phase3"

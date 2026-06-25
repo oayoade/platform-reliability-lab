@@ -1,0 +1,16 @@
+backend:
+  replicaCount: 2
+  image:
+    repository: platform-lab-backend
+    tag: phase3
+    pullPolicy: Never
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: platform-lab-frontend
+    tag: phase3
+    pullPolicy: Never
+
+ingress:
+  enabled: false

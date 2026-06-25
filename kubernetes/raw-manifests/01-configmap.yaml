@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platform-lab-config
+  namespace: platform-lab
+data:
+  POSTGRES_DB: platform_lab
+  POSTGRES_HOST: postgres-service
+  POSTGRES_PORT: "5432"

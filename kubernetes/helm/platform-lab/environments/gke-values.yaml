@@ -1,0 +1,21 @@
+backend:
+  replicaCount: 2
+  image:
+    repository: europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/platform-lab/platform-lab-backend
+    tag: phase3
+    pullPolicy: IfNotPresent
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/platform-lab/platform-lab-frontend
+    tag: phase3
+    pullPolicy: IfNotPresent
+
+
+  service:
+    type: ClusterIP
+
+ingress:
+  enabled: true
+  host: platform-lab.YOUR_DOMAIN.com
