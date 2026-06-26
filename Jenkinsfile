@@ -49,6 +49,22 @@ pipeline {
             }
         }
 
+        stage('Prepare Docker Builder') {
+            steps {
+                sh '''
+                    set -eu
+
+                    docker buildx version
+
+                    docker buildx create \
+                        --name platform-lab-builder \
+                        --use || docker buildx use platform-lab-builder
+
+                    docker buildx inspect --bootstrap
+                '''
+            }
+        }
+
         stage('Authenticate to Google Cloud') {
             steps {
                 withCredentials([file(credentialsId: 'gcp-artifact-registry-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
@@ -63,50 +79,32 @@ pipeline {
             }
         }
 
-        stage('Build Backend Image') {
+        stage('Build and Push Backend Image') {
             steps {
                 sh '''
                     set -eu
 
-                    docker build \
+                    docker buildx build \
                         --file app/backend/Dockerfile \
                         --tag "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
                         --platform linux/amd64 \
+                        --push \
                         app/backend
                 '''
             }
         }
 
-        stage('Build Frontend Image') {
+        stage('Build and Push Frontend Image') {
             steps {
                 sh '''
                     set -eu
 
-                    docker build \
+                    docker buildx build \
                         --file app/frontend/Dockerfile \
                         --tag "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
                         --platform linux/amd64 \
+                        --push \
                         app/frontend
-                '''
-            }
-        }
-
-        stage('Push Backend Image') {
-            steps {
-                sh '''
-                    set -eu
-
-                    docker push "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64"
-                '''
-            }
-        }
-
-        stage('Push Frontend Image') {
-            steps {
-                sh '''
-                    set -eu
-
-                    docker push "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64"
                 '''
             }
         }
@@ -125,10 +123,10 @@ pipeline {
                 Temporary manual deployment command:
 
                 helm upgrade platform-lab kubernetes/helm/platform-lab \\
-                  --namespace platform-lab-cloud \\
-                  --values kubernetes/helm/platform-lab/environments/gke-values.yaml \\
-                  --set backend.image.tag=${IMAGE_TAG}-amd64 \\
-                  --set frontend.image.tag=${IMAGE_TAG}-amd64
+                --namespace platform-lab-cloud \\
+                --values kubernetes/helm/platform-lab/environments/gke-values.yaml \\
+                --set backend.image.tag=${IMAGE_TAG}-amd64 \\
+                --set frontend.image.tag=${IMAGE_TAG}-amd64
                 """
             }
         }
