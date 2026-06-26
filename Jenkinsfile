@@ -82,9 +82,9 @@ pipeline {
                 sh '''
                     set -eu
 
-                    docker buildx build \
-                        -f app/frontend/Dockerfile \
-                        -t "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
+                    docker build \
+                        --file app/frontend/Dockerfile \
+                        --tag "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
                         --platform linux/amd64 \
                         app/frontend
                 '''
@@ -117,18 +117,18 @@ pipeline {
                 Images pushed successfully.
 
                 Backend:
-                ${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}
+                ${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64
 
                 Frontend:
-                ${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}
+                ${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64
 
                 Temporary manual deployment command:
 
                 helm upgrade platform-lab kubernetes/helm/platform-lab \\
                   --namespace platform-lab-cloud \\
                   --values kubernetes/helm/platform-lab/environments/gke-values.yaml \\
-                  --set backend.image.tag=${IMAGE_TAG} \\
-                  --set frontend.image.tag=${IMAGE_TAG}
+                  --set backend.image.tag=${IMAGE_TAG}-amd64 \\
+                  --set frontend.image.tag=${IMAGE_TAG}-amd64
                 """
             }
         }
