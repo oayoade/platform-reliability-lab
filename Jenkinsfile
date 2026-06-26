@@ -69,8 +69,8 @@ pipeline {
                     set -eu
 
                     docker buildx build \
-                        --file app/backend/Dockerfile \
-                        --tag "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
+                        -f app/backend/Dockerfile \
+                        -t "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
                         --platform linux/amd64 \
                         app/backend
                 '''
@@ -83,8 +83,8 @@ pipeline {
                     set -eu
 
                     docker buildx build \
-                        --file app/frontend/Dockerfile \
-                        --tag "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
+                        -f app/frontend/Dockerfile \
+                        -t "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
                         --platform linux/amd64 \
                         app/frontend
                 '''
