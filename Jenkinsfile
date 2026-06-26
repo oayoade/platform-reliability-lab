@@ -68,9 +68,9 @@ pipeline {
                 sh '''
                     set -eu
 
-                    docker buildx build \
-                        -f app/backend/Dockerfile \
-                        -t "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
+                    docker build \
+                        --file app/backend/Dockerfile \
+                        --tag "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64" \
                         --platform linux/amd64 \
                         app/backend
                 '''
