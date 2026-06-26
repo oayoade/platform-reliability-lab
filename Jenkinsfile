@@ -70,7 +70,7 @@ pipeline {
 
                     docker build \
                         --file app/backend/Dockerfile \
-                        --tag "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}" \
+                        --tag "${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}:amd64" \
                         --platform linux/amd64 \
                         app/backend
                 '''
@@ -84,7 +84,7 @@ pipeline {
 
                     docker build \
                         --file app/frontend/Dockerfile \
-                        --tag "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}" \
+                        --tag "${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}:amd64" \
                         --platform linux/amd64 \
                         app/frontend
                 '''
