@@ -118,50 +118,50 @@ pipeline {
                     git config user.name "Platform Lab Jenkins"
 
                     python3 - <<'PY'
-        from pathlib import Path
+from pathlib import Path
 
-        values_path = Path("kubernetes/helm/platform-lab/environments/gke-values.yaml")
-        content = values_path.read_text()
+values_path = Path("kubernetes/helm/platform-lab/environments/gke-values.yaml")
+content = values_path.read_text()
 
-        old_lines = content.splitlines()
-        new_lines = []
+old_lines = content.splitlines()
+new_lines = []
 
-        inside_backend = False
-        inside_frontend = False
-        inside_image = False
+inside_backend = False
+inside_frontend = False
+inside_image = False
 
-        for line in old_lines:
-        stripped = line.strip()
+for line in old_lines:
+    stripped = line.strip()
 
-        if line.startswith("backend:"):
+    if line.startswith("backend:"):
         inside_backend = True
         inside_frontend = False
         inside_image = False
         new_lines.append(line)
         continue
 
-        if line.startswith("frontend:"):
+    if line.startswith("frontend:"):
         inside_backend = False
         inside_frontend = True
         inside_image = False
         new_lines.append(line)
         continue
 
-        if stripped == "image:" and (inside_backend or inside_frontend):
+    if stripped == "image:" and (inside_backend or inside_frontend):
         inside_image = True
         new_lines.append(line)
         continue
 
-        if inside_image and stripped.startswith("tag:"):
+    if inside_image and stripped.startswith("tag:"):
         indentation = line[: len(line) - len(line.lstrip())]
         new_lines.append(f"{indentation}tag: {__import__('os').environ['IMAGE_TAG']}")
         inside_image = False
         continue
 
-        new_lines.append(line)
+    new_lines.append(line)
 
-        values_path.write_text("\\n".join(new_lines) + "\\n")
-        PY
+values_path.write_text("\\n".join(new_lines) + "\\n")
+PY
 
                     git status
                     git add kubernetes/helm/platform-lab/environments/gke-values.yaml
@@ -169,6 +169,6 @@ pipeline {
                     git push
                 '''
             }
-}
+        }
     }
 }
