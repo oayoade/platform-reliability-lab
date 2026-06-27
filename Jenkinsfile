@@ -170,7 +170,7 @@ PY
                         echo "No Gitops changes to commit"
                     else
                         git commit --message "Update image tag to ${IMAGE_TAG}"
-                        git push origin main
+                        git push origin HEAD:main
                     fi
 
                     
