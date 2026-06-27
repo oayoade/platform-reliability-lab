@@ -170,6 +170,7 @@ PY
                         echo "No Gitops changes to commit"
                     else
                         git commit --message "Update image tag to ${IMAGE_TAG}"
+                        git remote set-url origin "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/oayoade/platform-reliability-lab.git"
                         git push origin HEAD:main
                     fi
 
