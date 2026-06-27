@@ -109,26 +109,66 @@ pipeline {
             }
         }
 
-        stage('Deployment Instructions') {
+        stage('Update GitOps Image Tags') {
             steps {
-                echo """
-                Images pushed successfully.
+                sh '''
+                    set -eu
 
-                Backend:
-                ${BACKEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64
+                    git config user.email "jenkins@platform-lab.local"
+                    git config user.name "Platform Lab Jenkins"
 
-                Frontend:
-                ${FRONTEND_IMAGE_REPOSITORY}:${IMAGE_TAG}-amd64
+                    python3 - <<'PY'
+        from pathlib import Path
 
-                Temporary manual deployment command:
+        values_path = Path("kubernetes/helm/platform-lab/environments/gke-values.yaml")
+        content = values_path.read_text()
 
-                helm upgrade platform-lab kubernetes/helm/platform-lab \\
-                --namespace platform-lab-cloud \\
-                --values kubernetes/helm/platform-lab/environments/gke-values.yaml \\
-                --set backend.image.tag=${IMAGE_TAG}-amd64 \\
-                --set frontend.image.tag=${IMAGE_TAG}-amd64
-                """
+        old_lines = content.splitlines()
+        new_lines = []
+
+        inside_backend = False
+        inside_frontend = False
+        inside_image = False
+
+        for line in old_lines:
+        stripped = line.strip()
+
+        if line.startswith("backend:"):
+        inside_backend = True
+        inside_frontend = False
+        inside_image = False
+        new_lines.append(line)
+        continue
+
+        if line.startswith("frontend:"):
+        inside_backend = False
+        inside_frontend = True
+        inside_image = False
+        new_lines.append(line)
+        continue
+
+        if stripped == "image:" and (inside_backend or inside_frontend):
+        inside_image = True
+        new_lines.append(line)
+        continue
+
+        if inside_image and stripped.startswith("tag:"):
+        indentation = line[: len(line) - len(line.lstrip())]
+        new_lines.append(f"{indentation}tag: {__import__('os').environ['IMAGE_TAG']}")
+        inside_image = False
+        continue
+
+        new_lines.append(line)
+
+        values_path.write_text("\\n".join(new_lines) + "\\n")
+        PY
+
+                    git status
+                    git add kubernetes/helm/platform-lab/environments/gke-values.yaml
+                    git commit --message "Update image tag to ${IMAGE_TAG}" || echo "No GitOps changes to commit"
+                    git push
+                '''
             }
-        }
+}
     }
 }
