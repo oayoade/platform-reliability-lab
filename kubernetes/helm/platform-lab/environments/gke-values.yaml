@@ -1,21 +1,19 @@
 backend:
   replicaCount: 2
   image:
-    repository: europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/platform-lab/platform-lab-backend
-    tag: phase3
+    repository: europe-west3-docker.pkg.dev/gke-sre-500509/platform-lab/platform-lab-backend
+    tag: phase4-cloud
     pullPolicy: IfNotPresent
 
 frontend:
   replicaCount: 2
   image:
-    repository: europe-west1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/platform-lab/platform-lab-frontend
-    tag: phase3
+    repository: europe-west3-docker.pkg.dev/gke-sre-500509/platform-lab/platform-lab-frontend
+    tag: phase4-cloud
     pullPolicy: IfNotPresent
-
-
   service:
-    type: ClusterIP
+    type: LoadBalancer
 
 ingress:
-  enabled: true
-  host: platform-lab.YOUR_DOMAIN.com
+  enabled: false
+  host: platform-lab.example.com
