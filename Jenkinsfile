@@ -25,7 +25,7 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    env.IMAGE_TAG = "jenkins-${env.BUILD_NUMBER}-${env.SHORT_COMMIT}-amd64"
+                    env.IMAGE_TAG = "jenkins-${env.BUILD_NUMBER}-${env.SHORT_COMMIT}"
 
                     echo "Image tag will be: ${env.IMAGE_TAG}"
                 }
