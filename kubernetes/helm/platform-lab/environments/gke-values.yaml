@@ -2,14 +2,14 @@ backend:
   replicaCount: 2
   image:
     repository: europe-west3-docker.pkg.dev/gke-sre-500509/platform-lab/platform-lab-backend
-    tag: jenkins-18-a7bf076
+    tag: jenkins-19-b2b112d-amd64
     pullPolicy: IfNotPresent
 
 frontend:
   replicaCount: 2
   image:
     repository: europe-west3-docker.pkg.dev/gke-sre-500509/platform-lab/platform-lab-frontend
-    tag: jenkins-18-a7bf076
+    tag: jenkins-19-b2b112d-amd64
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
