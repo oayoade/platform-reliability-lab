@@ -111,13 +111,14 @@ pipeline {
 
         stage('Update GitOps Image Tags') {
             steps {
-                sh '''
-                    set -eu
+                withCredentials([usernamePassword(credentialsId: 'github-write-token', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        set -eu
 
-                    git config user.email "jenkins@platform-lab.local"
-                    git config user.name "Platform Lab Jenkins"
+                        git config user.email "jenkins@platform-lab.local"
+                        git config user.name "Platform Lab Jenkins"
 
-                    python3 - <<'PY'
+                        python3 - <<'PY'
 from pathlib import Path
 
 values_path = Path("kubernetes/helm/platform-lab/environments/gke-values.yaml")
@@ -163,19 +164,18 @@ for line in old_lines:
 values_path.write_text("\\n".join(new_lines) + "\\n")
 PY
 
-                    git status
-                    git add kubernetes/helm/platform-lab/environments/gke-values.yaml
+                        git status
+                        git add kubernetes/helm/platform-lab/environments/gke-values.yaml
 
-                    if git diff --cached --quiet; then
-                        echo "No Gitops changes to commit"
-                    else
-                        git commit --message "Update image tag to ${IMAGE_TAG}"
-                        git remote set-url origin "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/oayoade/platform-reliability-lab.git"
-                        git push origin HEAD:main
-                    fi
-
-                    
-                '''
+                        if git diff --cached --quiet; then
+                            echo "No Gitops changes to commit"
+                        else
+                            git commit --message "Update image tag to ${IMAGE_TAG}"
+                            git remote set-url origin "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/oayoade/platform-reliability-lab.git"
+                            git push origin HEAD:main
+                        fi
+                    '''
+                }
             }
         }
     }
