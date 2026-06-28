@@ -3,6 +3,7 @@ import time
 from typing import List
 
 import psycopg
+from prometheus_fastapi_instrumentator import Instrumentator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,6 +14,8 @@ DATABASE_URL = os.getenv(
 )
 
 app = FastAPI(title="Platform Reliability Lab API")
+
+Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 app.add_middleware(
     CORSMiddleware,
