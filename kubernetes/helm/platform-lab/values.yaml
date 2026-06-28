@@ -62,3 +62,8 @@ frontend:
 ingress:
   enabled: false
   host: platform-lab-helm.local
+
+monitoring:
+  serviceMonitor:
+    enabled: false
+    interval: 15s

@@ -17,3 +17,8 @@ frontend:
 ingress:
   enabled: false
   host: platform-lab.example.com
+
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 15s
